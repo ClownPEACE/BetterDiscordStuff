@@ -3375,6 +3375,8 @@ module.exports = (() => {
 							tabs: TopBarRef.current.state.tabs.map(tab => {
 								if(tab.selected){
 									const channelId = SelectedChannelStore.getChannelId();
+									const selectedIndex = this.settings.tabs.findIndex(tab2 => tab2.selected);
+									const minimized = selectedIndex !== -1 ? this.settings.tabs[selectedIndex].minimized : false;
 									return {
 										name: getCurrentName(),
 										url: location.pathname,
@@ -3382,13 +3384,14 @@ module.exports = (() => {
 										currentStatus: getCurrentUserStatus(location.pathname),
 										iconUrl: getCurrentIconUrl(location.pathname),
 										channelId: channelId,
-										minimized: this.settings.tabs[this.settings.tabs.findIndex(tab=>tab.selected)].minimized
+										minimized: minimized
 									};
 								}else{
 									return Object.assign({}, tab);
 								}
 							})
 						}, this.saveSettings);
+					}
 					}else if(!this.settings.reopenLastChannel){
 						const channelId = SelectedChannelStore.getChannelId();
 						this.settings.tabs[this.settings.tabs.findIndex(tab=>tab.selected)] = {
@@ -3398,7 +3401,10 @@ module.exports = (() => {
 							currentStatus: getCurrentUserStatus(location.pathname),
 							iconUrl: getCurrentIconUrl(location.pathname),
 							channelId: channelId,
-							minimized: this.settings.tabs[this.settings.tabs.findIndex(tab=>tab.selected)].minimized
+							minimized: (() => {
+							  const index = this.settings.tabs.findIndex((tab) => tab.selected);
+							  return index !== -1 ? this.settings.tabs[index].minimized : false;
+							})(),
 						};
 					}
 				}
